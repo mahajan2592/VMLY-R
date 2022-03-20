@@ -1,0 +1,182 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_ForecastingLayout.cshtml";
+}
+<style>
+    .pull-left {
+        float: left !important;
+    }
+
+    .pull-right {
+        float: right !important;
+    }
+</style>
+<div class="row justify-content-md-start">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                Wellcome
+                <p>@ViewBag.Message</p>
+                @if (Session["projectUpdateMessage"] != null)
+                {
+                    <p>@Session["projectUpdateMessage"]</p>
+                }
+            </div>
+            <div class="card-body">
+                @if (Session["FullName"] != null)
+                {
+                    <p>Name: @Session["FullName"].ToString()</p>
+                    <p>Email: @Session["Email"].ToString()</p>
+                    <a href="@Url.Action("Index","Project")" class="btn btn-primary">Enter Project Data</a>
+                    <a href="@Url.Action("Logout","Home")" class="btn btn-warning">Logout</a>
+                }
+            </div>
+            @if (Session["ProjectData"] != null)
+            {
+                <div class="category-filter">
+                    <select id="categoryFilter" class="form-group">
+                        <option value="">Show All</option>
+                        <option value="January">January</option>
+                        <option value="February">February</option>
+                        <option value="March">March</option>
+                    </select>
+                </div>
+                <div class="card-body project-card">
+                    <table class="table table-bordered table-responsive table-hover" id="ForecastProject">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Project Name</th>
+                                <th>Job Number</th>
+                                <th>Month</th>
+                                <th>Status</th>
+                                <th>Revenue</th>
+                                <th>Update</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var projectData in Session["ProjectData"] as ICollection<RevenueForecastingTool.Models.Project>)
+                            {
+                                <tr>
+                                    <td><span class="client-name">@projectData.Client</span> <input type="hidden" class="hdn-project-id" value="@projectData.id" /></td>
+                                    <td class="project-name">@projectData.ProjectName</td>
+                                    <td class="job-number">@projectData.JobNumber</td>
+                                    <td class="project-month">@projectData.Month</td>
+                                    <td class="project-status">@projectData.Status</td>
+                                    <td class="project-revenue">@projectData.Revenue</td>
+                                    <td><input type="button" class="updateProject" value="Update" /></td>
+                                    <td><a href="@Url.Action("Delete","Project", new {id= @projectData.id })" class="btn btn-primary">Delete</a></td>
+                                </tr>
+
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="5" style="text-align:right">Total:</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#ForecastProject').DataTable(
+            {
+                "dom": '<"pull-left"f><"pull-right"l>tip',
+                "searching": true,
+                "footerCallback": function (row, data, start, end, display) {
+                    var api = this.api();
+
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function (i) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '') * 1 :
+                            typeof i === 'number' ?
+                                i : 0;
+                    };
+
+                    // Total over all pages
+                    total = api
+                        .column(5)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Total over this page
+                    pageTotal = api
+                        .column(5, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Update footer
+                    $(api.column(5).footer()).html(
+                        '$' + pageTotal + ' ( $' + total + ' total)'
+                    );
+                }
+            }
+        );
+   
+
+    //Get a reference to the new datatable
+    var table = $('#ForecastProject').DataTable();
+       
+        $("#ForecastProject_length.dataTables_length").append($("#categoryFilter"));
+
+    var categoryIndex = 0;
+    $("#ForecastProject th").each(function (i) {
+        if ($($(this)).html() == "Month") {
+            categoryIndex = i; return false;
+        }
+    });
+    //Use the built in datatables API to filter the existing rows by the Category column
+    $.fn.dataTable.ext.search.push(
+        function (settings, data, dataIndex) {
+            var selectedItem = $('#categoryFilter').val()
+            var category = data[categoryIndex];
+            if (selectedItem === "" || category.includes(selectedItem)) {
+                return true;
+            }
+            return false;
+        }
+    );
+    //Set the change event for the Category Filter dropdown to redraw the datatable each time
+    //a user selects a new filter.
+    $("#categoryFilter").change(function (e) {
+        table.draw();
+    });
+
+    table.draw();
+    });
+    $(".updateProject").click(function () {
+        console.log(1);
+        var clientName = $(this).parent().parent().find('.client-name').html();
+        var projectName = $(this).parent().parent().find('.project-name').html();
+        var jobNumber = $(this).parent().parent().find('.job-number').html();
+        var projectMonth = $(this).parent().parent().find('.project-month').html();
+        var projectStatus = $(this).parent().parent().find('.project-status').html();
+        var projectRevenue = $(this).parent().parent().find('.project-revenue').html();
+        var projectId = $(this).parent().parent().find('.hdn-project-id').val();
+        console.log(clientName + projectName);
+        var data = JSON.stringify({ clientName: clientName, projectName: projectName, jobNumber: jobNumber, projectMonth: projectMonth, projectStatus: projectStatus, projectRevenue: projectRevenue, projectId: projectId  });
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Update", "Project")',
+            data: data,
+            contentType: "application/json; charset=utf-8",
+            success: function (data) { console.log('Success'); $(".project-card").html(data); },
+            error: function (response) { console.log('Error' + response.responseText); }
+             });
+    });
+
+</script>
+

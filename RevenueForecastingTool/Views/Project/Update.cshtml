@@ -1,0 +1,63 @@
+﻿@model RevenueForecastingTool.Models.Project
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_ForecastingLayout.cshtml";
+}
+
+
+<div class="row justify-content-md-center">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                Project Details
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("UpdateForecast", "Project", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m =>m.id)
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Client)
+                        @Html.TextBoxFor(m => m.Client, "", new { @class = "form-control", @placeholder = "Client Name" })
+
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.ProjectName)
+                        @Html.TextBoxFor(m => m.ProjectName, "", new { @class = "form-control", @placeholder = "Project Name" })
+
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.JobNumber)
+                        @Html.TextBoxFor(m => m.JobNumber, "", new { @class = "form-control", @placeholder = "Job Number", @type = "number" })
+
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Month)
+                        @Html.TextBoxFor(m => m.Month, "", new { @class = "form-control", @placeholder = "Month" })
+
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Status)
+                        @Html.TextBoxFor(m => m.Status, "", new { @class = "form-control", @placeholder = "Status" })
+
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Revenue)
+                        @Html.TextBoxFor(m => m.Revenue, "", new { @class = "form-control", @placeholder = "Revenue", @type = "number" })
+
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <input type="submit" name="submit" class="btn btn-primary" value="Update" />
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-warning">Cancel</a>
+                    </div>
+                }
+                </div>
+        </div>
+    </div>
+</div>
+
+

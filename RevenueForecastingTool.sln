@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevenueForecastingTool", "RevenueForecastingTool\RevenueForecastingTool.csproj", "{4CDCDB04-0506-4C62-9614-B65FBE53886E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4CDCDB04-0506-4C62-9614-B65FBE53886E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CDCDB04-0506-4C62-9614-B65FBE53886E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CDCDB04-0506-4C62-9614-B65FBE53886E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CDCDB04-0506-4C62-9614-B65FBE53886E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {82D1D56F-B93F-4F45-8484-AA98C80DD50E}
+	EndGlobalSection
+EndGlobal
