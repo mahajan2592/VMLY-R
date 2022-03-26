@@ -7,6 +7,7 @@
 <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
 <script>
     var revenueArray = @Html.Raw(Json.Encode(@ViewBag.RevenueArray));
+    var revenueMonthArray=  @Html.Raw(Json.Encode(@ViewBag.RevenueMonthArray));
 </script>
 <input type="hidden" class="revenue-hdn-array" value=""/>
 <script src="~/Scripts/Reporting/Reporting.js"></script>

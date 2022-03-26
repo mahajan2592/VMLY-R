@@ -14,6 +14,7 @@ namespace RevenueForecastingTool.Controllers
         public ActionResult Index()
         {
             List<decimal> RevenueArray = new List<decimal>();
+            List<string> RevenueMonthArray = new List<string>();
             using (var context = new DB_Entities())
             {
                 var projectData = context.Projects.ToList();
@@ -30,7 +31,20 @@ namespace RevenueForecastingTool.Controllers
                         case "April":
                         case "May":
                         case "June":
-                            RevenueArray.Add(projectData.Where(x=>x.Month==data.Month).Select(r =>r.Revenue).FirstOrDefault());
+                        case "July":
+                        case "August":
+                            // RevenueArray.Add(projectData.Where(x=>x.Month==data.Month).Select(r =>r.Revenue).FirstOrDefault());
+                            if (!RevenueMonthArray.Contains(data.Month))
+                            {
+                                decimal sum = 0;
+                                var listOfRev = projectData.Where(x => x.Month == data.Month).Select(r => r.Revenue);
+                                foreach (decimal x in listOfRev)
+                                {
+                                    sum += x;
+                                }
+                                RevenueArray.Add(sum);
+                                RevenueMonthArray.Add(data.Month);
+                            }
                             // code block
                             break;
                         default:
@@ -40,7 +54,9 @@ namespace RevenueForecastingTool.Controllers
                 }
 
             }
-            ViewBag.RevenueArray = RevenueArray.ToArray();
+            ViewBag.RevenueArray = RevenueArray.ToArray(); 
+            ViewBag.RevenueMonthArray = RevenueMonthArray.Distinct().ToArray();
+
             return View();
         }
     }
